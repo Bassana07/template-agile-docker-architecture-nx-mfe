@@ -1,0 +1,1 @@
+# template-agile-docker-architecture-nx-mfe
