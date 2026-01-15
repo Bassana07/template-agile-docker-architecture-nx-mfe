@@ -1,0 +1,99 @@
+# docker-compose.yml
+
+services:
+  # ==========================================
+  # DEVELOPMENT PROFILE
+  # ==========================================
+  
+  shell-dev:
+    build:
+      context: .
+      dockerfile: apps/shell/Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
+    environment:
+      - NODE_ENV=development
+      - MFE_AUTH_URL=http://mfe_auth-dev:3001/remoteEntry.js
+      - NEXT_PUBLIC_AUTH_SERVICE_URL=http://backend-auth:8001
+    depends_on:
+      - mfe_auth-dev
+    networks:
+      - app-network
+    profiles: ["dev"]
+
+  mfe_auth-dev:
+    build:
+      context: .
+      dockerfile: apps/mfe_auth/Dockerfile.dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/dist
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_AUTH_SERVICE_URL=http://backend-auth:8001
+    networks:
+      - app-network
+    profiles: ["dev"]
+
+  # ==========================================
+  # PRODUCTION PROFILE
+  # ==========================================
+  
+  shell-prod:
+    build:
+      context: .
+      dockerfile: apps/shell/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MFE_AUTH_URL=http://auth-prod:3001/remoteEntry.js
+      - NEXT_PUBLIC_AUTH_SERVICE_URL=http://backend-auth:8001
+    depends_on:
+      - mfe_auth-prod
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles: ["prod"]
+
+  mfe_auth-prod:
+    build:
+      context: .
+      dockerfile: apps/mfe_auth/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_AUTH_SERVICE_URL=http://backend-auth:8001
+    networks:
+      - app-network
+    restart: unless-stopped
+    profiles: ["prod"]
+
+  # ==========================================
+  # NGINX (Partagé entre dev et prod)
+  # ==========================================
+  
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
+    profiles: ["dev", "prod"]
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  node_modules:

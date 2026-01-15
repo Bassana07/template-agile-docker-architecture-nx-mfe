@@ -1,0 +1,15 @@
+{
+  "name": "mfe_auth",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "mfe_auth/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "options": {
+        "port": 4202
+      },
+      "dependsOn": ["shell:serve"]
+    }
+  }
+}
