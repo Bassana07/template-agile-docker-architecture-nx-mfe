@@ -18,6 +18,7 @@
       "@libs-shared-ui": ["apps/libs/shared/ui/src/index.ts"],
       "@libs-shared-utils": ["apps/libs/shared/utils/src/index.ts"],
       "@libs-shared-api-client": ["apps/libs/shared/api-client/src/index.ts"],
+      "@libs-shared-types": ["apps/libs/shared/types/src/index.ts"],
       "mfe_auth/Module": ["apps/mfe_auth/src/remote-entry.ts"]
     }
   },
